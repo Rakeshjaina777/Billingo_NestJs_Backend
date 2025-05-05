@@ -4,6 +4,12 @@ import { AppService } from './app.service';
 
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
+import { InvoicesModule } from './invoices/invoices.module';
+import { ItemsModule } from './items/items.module';
+import { PaymentsModule } from './payments/payments.module';
+import { ShopsModule } from './shops/shops.module';
+import { AuthModule } from './auth/auth.module';
 import { ShopsModule } from './shops/shops.module';
 import { ItemsModule } from './items/items.module';
 import { InvoicesModule } from './invoices/invoices.module';
@@ -16,6 +22,7 @@ import { join } from 'path';
 
 import * as redisStore from 'cache-manager-ioredis';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
