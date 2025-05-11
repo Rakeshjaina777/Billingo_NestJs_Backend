@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
-import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+async create(input: CreateInvoiceInput, user: any) {
+  const shop = await this.shopRepository.findOneOrFail({
+    where: { id: user.shop.id },
+  });
 
-@Injectable()
-export class InvoicesService {
-  create(createInvoiceDto: CreateInvoiceDto) {
-    return 'This action adds a new invoice';
+  const invoiceItems: InvoiceItem[] = [];
+
+  for (const entry of input.items) {
+    const item = await this.itemRepository.findOneOrFail({ where: { id: entry.itemId } });
+
+    if (item.quantity < entry.quantity) {
+      throw new BadRequestException(`Not enough stock for item: ${item.name}`);
+    }
+
+    // Reduce inventory
+    item.quantity -= entry.quantity;
+    await this.itemRepository.save(item);
+
+    const invoiceItem = this.invoiceItemRepository.create({
+      item,
+      quantity: entry.quantity,
+      price: entry.price,
+      discount: entry.discount,
+    });
+
+    invoiceItems.push(invoiceItem);
   }
 
-  findAll() {
-    return `This action returns all invoices`;
-  }
+  const invoice = this.invoiceRepository.create({
+    ...input,
+    items: invoiceItems,
+    shop,
+    createdBy: { id: user.userId },
+  });
 
-  findOne(id: number) {
-    return `This action returns a #${id} invoice`;
-  }
+  const savedInvoice = await this.invoiceRepository.save(invoice);
 
-  update(id: number, updateInvoiceDto: UpdateInvoiceDto) {
-    return `This action updates a #${id} invoice`;
-  }
+  // Notify (RabbitMQ) or generate PDF (next)
+  this.rabbitMQService.publishInvoiceCreated(savedInvoice.id);
 
-  remove(id: number) {
-    return `This action removes a #${id} invoice`;
-  }
+  return savedInvoice;
 }

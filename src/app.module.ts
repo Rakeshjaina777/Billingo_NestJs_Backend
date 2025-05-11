@@ -34,11 +34,13 @@ import { UsersModule } from './users/users.module';
     PaymentsModule,
     CommonModule,
 
-    GraphQLModule.forRoot({
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      sortSchema: true,
-      playground: true,
-    }),
+  GraphQLModule.forRoot({
+  autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+  sortSchema: true,
+  playground: true,
+  context: ({ req }) => ({ req }),  // 👈 makes JWT available in resolvers
+}),
+
 
     TypeOrmModule.forRoot({
       type: 'postgres',
