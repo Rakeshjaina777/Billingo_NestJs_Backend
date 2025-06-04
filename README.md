@@ -14,7 +14,6 @@ Built using:
 - ✅ REST & GraphQL (Apollo)
 - ✅ JWT Authentication with Role Guards
 - ✅ PDF (Puppeteer) + CSV (json2csv) Exports
-- ✅ Multer-based Uploads
 - ✅ Queueing & Background Tasks
 
 ---
