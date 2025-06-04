@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Shop } from 'src/shops/entities/shop.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Shop } from '../shops/shop.entity';
 
 @Entity()
 export class Item {
@@ -9,15 +16,21 @@ export class Item {
   @Column()
   name: string;
 
-  @Column('decimal')
+  @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
   @Column()
-  quantity: number;
+  stock: number;
 
-  @Column({ type: 'decimal', nullable: true })
-  discount: number;
+  @Column({ nullable: true })
+  description: string;
 
-  @ManyToOne(() => Shop, (shop) => shop.items)
+  @ManyToOne(() => Shop, (shop) => shop.id, { eager: true })
   shop: Shop;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

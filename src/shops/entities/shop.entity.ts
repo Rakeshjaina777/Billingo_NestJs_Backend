@@ -1,7 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Item } from 'src/items/entities/item.entity';
-import { Invoice } from 'src/invoices/entities/invoice.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { User } from '../users/user.entity';
 
 @Entity()
 export class Shop {
@@ -11,21 +16,15 @@ export class Shop {
   @Column()
   name: string;
 
-  @Column()
-  contactNumber: string;
-
-  @Column()
-  address: string;
-
   @Column({ nullable: true })
-  logoUrl: string;
+  logo: string;
 
-  @OneToMany(() => User, (user) => user.shop)
-  users: User[];
+  @ManyToOne(() => User, (user) => user.id, { eager: true })
+  owner: User;
 
-  @OneToMany(() => Item, (item) => item.shop)
-  items: Item[];
+  @CreateDateColumn()
+  createdAt: Date;
 
-  @OneToMany(() => Invoice, (invoice) => invoice.shop)
-  invoices: Invoice[];
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

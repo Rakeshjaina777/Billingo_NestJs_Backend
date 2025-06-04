@@ -1,24 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Invoice } from './invoice.entity';
-import { Item } from 'src/items/entities/item.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
+import { Shop } from '../shops/shop.entity';
+import { User } from '../users/user.entity';
+import { InvoiceItem } from './invoice-item.entity';
 
 @Entity()
-export class InvoiceItem {
+export class Invoice {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Invoice, (invoice) => invoice.items)
-  invoice: Invoice;
+  @ManyToOne(() => User, { eager: true })
+  user: User;
 
-  @ManyToOne(() => Item)
-  item: Item;
+  @ManyToOne(() => Shop, { eager: true })
+  shop: Shop;
 
-  @Column('int')
-  quantity: number;
+  @OneToMany(() => InvoiceItem, (item) => item.invoice, {
+    cascade: true,
+    eager: true,
+  })
+  items: InvoiceItem[];
 
-  @Column('decimal')
-  price: number;
-
-  @Column('decimal', { default: 0 })
-  discount: number;
+  @CreateDateColumn()
+  createdAt: Date;
 }

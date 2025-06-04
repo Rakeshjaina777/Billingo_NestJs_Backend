@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreateShopDto } from './dto/create-shop.dto';
-import { UpdateShopDto } from './dto/update-shop.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
 
 @Injectable()
-export class ShopsService {
-  create(createShopDto: CreateShopDto) {
-    return 'This action adds a new shop';
+export class UsersService {
+  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+
+  async findAll(): Promise<User[]> {
+    return this.userRepo.find({
+      select: ['id', 'email', 'name', 'role', 'createdAt', 'updatedAt'],
+    });
   }
 
-  findAll() {
-    return `This action returns all shops`;
+  async findById(id: string): Promise<User> {
+    const user = await this.userRepo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} shop`;
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepo.findOne({ where: { email } });
   }
 
-  update(id: number, updateShopDto: UpdateShopDto) {
-    return `This action updates a #${id} shop`;
+  async create(data: Partial<User>): Promise<User> {
+    const user = this.userRepo.create(data);
+    return this.userRepo.save(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} shop`;
+  async update(id: string, data: Partial<User>): Promise<User> {
+    await this.userRepo.update(id, data);
+    return this.findById(id);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.userRepo.delete(id);
   }
 }

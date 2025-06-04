@@ -1,20 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Invoice } from 'src/invoices/entities/invoice.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
+import { Invoice } from '../invoices/invoice.entity';
 
 @Entity()
 export class Payment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Invoice, (invoice) => invoice.payments)
+  @ManyToOne(() => Invoice, { eager: true })
   invoice: Invoice;
 
+  @Column('decimal', { precision: 10, scale: 2 })
+  amount: number;
+
   @Column()
-  method: string; // cash, card, UPI, etc.
+  method: string;
 
-  @Column('decimal')
-  amountPaid: number;
-
-  @Column('decimal', { default: 0 })
-  due: number;
+  @CreateDateColumn()
+  paidAt: Date;
 }

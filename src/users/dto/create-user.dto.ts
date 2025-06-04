@@ -1,22 +1,31 @@
-import { InputType, Field } from '@nestjs/graphql';
-import { IsEmail, IsEnum, IsNotEmpty, MinLength } from 'class-validator';
-import { UserRole } from '../entities/user.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@InputType()
-export class CreateUserInput {
-  @Field()
-  @IsNotEmpty()
-  name: string;
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Field()
-  @IsEmail()
+  @Column({ unique: true })
   email: string;
 
-  @Field()
-  @MinLength(6)
+  @Column()
   password: string;
 
-  @Field(() => UserRole)
-  @IsEnum(UserRole)
-  role: UserRole;
+  @Column()
+  name: string;
+
+  @Column({ type: 'enum', enum: ['Admin', 'Owner', 'User'], default: 'User' })
+  role: 'Admin' | 'Owner' | 'User';
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
