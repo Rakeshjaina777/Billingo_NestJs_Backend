@@ -1,6 +1,6 @@
 # 🧾 Billingo — Scalable Billing Software Backend
 
-**Billingo** is a modern and scalable backend for billing systems built with **NestJS**, supporting both **REST** and **GraphQL** APIs. It provides a clean architecture, modular codebase, multi-role access, invoicing, analytics, PDF/CSV exports, and background processing using Redis and RabbitMQ.
+**Billingo** is a modern and scalable backend for billing systems built with **NestJS**, supporting both **REST** and **GraphQL** APIs. It provides a clean architecture, modular codebase, multi-role access, invoicing, analytics, PDF/CSV exports, and background processing using Redis.
 
 ---
 
